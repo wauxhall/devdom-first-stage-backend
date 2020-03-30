@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class StudyMaterialSeeder extends Seeder
 {
@@ -12,6 +13,14 @@ class StudyMaterialSeeder extends Seeder
      */
     public function run()
     {
+        DB::statement("SET FOREIGN_KEY_CHECKS = 0;");
+
+        DB::table('study_material_links')->truncate();
+        DB::table('study_materials')->truncate();
+        DB::table('study_material_types')->truncate();
+        DB::table('author_types')->truncate();
+        DB::table('study_material_study_material_category')->truncate();
+
         DB::table('study_material_types')->insert([
             [ 'name' => 'Статья',   'code' => 'article' ],
             [ 'name' => 'Видео',    'code' => 'video' ],
@@ -62,6 +71,13 @@ class StudyMaterialSeeder extends Seeder
                 'link' => 'https://vk.com/doc27630996_523099763',
                 'study_material_id' => '3'
             ]
+        ]);
+
+        DB::table('study_material_study_material_category')->insert([
+            [ 'study_material_id' => 1, 'study_material_category_id' => 2 ],
+            [ 'study_material_id' => 1, 'study_material_category_id' => 3 ],
+            [ 'study_material_id' => 2, 'study_material_category_id' => 1 ],
+            [ 'study_material_id' => 3, 'study_material_category_id' => 2 ]
         ]);
     }
 }
