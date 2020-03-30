@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StudyMaterialFilterRequest extends FormRequest
 {
+    public $errors = [];
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -36,5 +38,15 @@ class StudyMaterialFilterRequest extends FormRequest
             'category'   => 'sometimes|array',
             'category.*' => 'required_with:category|numeric|distinct|min:1'
         ];
+    }
+
+    /**
+     * Redeclare failed validation method
+     *
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     */
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator) : void
+    {
+        $this->errors = $validator->errors()->toArray();
     }
 }
