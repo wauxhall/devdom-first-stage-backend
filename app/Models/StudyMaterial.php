@@ -8,8 +8,23 @@ class StudyMaterial extends Model
 {
     protected $fillable = [ 'study_material_type_id', 'author_type_id', 'name', 'description' ];
 
-    public function categories()
+    public function category()
     {
-        return $this->belongsToMany(StudyMaterialCategory::class, 'study_material_categories');
+        return $this->belongsToMany(StudyMaterialCategory::class, 'study_material_study_material_category', 'study_material_category_id', 'study_material_id');
+    }
+
+    public function study_material_link()
+    {
+        return $this->hasMany(StudyMaterialLink::class);
+    }
+
+    public function study_material_type()
+    {
+        return $this->belongsTo(StudyMaterialType::class);
+    }
+
+    public function author_type()
+    {
+        return $this->belongsTo(AuthorType::class);
     }
 }
