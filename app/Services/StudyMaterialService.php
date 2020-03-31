@@ -101,8 +101,8 @@ class StudyMaterialService implements StudyMaterialLogicInterface
 
         if(empty($result)) {
             $this->response['success'] = false;
-            $this->response['data']    = 'Учебный материал с id = ' . $id . ' не найден.';
-            $this->response['message'] = 'Ошибка.';
+            $this->response['data']    = [];
+            $this->response['message'] = 'Учебный материал с id = ' . $id . ' не найден.';
         } else {
             $this->response['data']    = $result;
         }
@@ -182,7 +182,15 @@ class StudyMaterialService implements StudyMaterialLogicInterface
 
         DB::beginTransaction();
 
-        StudyMaterial::where('id', $id)->update($update_data);
+        $rows_affected = StudyMaterial::where('id', $id)->update($update_data);
+
+        if(empty($rows_affected)) {
+            $this->response['success'] = false;
+            $this->response['data']    = [];
+            $this->response['message'] = 'Учебный материал с id = ' . $id . ' не найден. Данные не обновлены';
+
+            return $this->response;
+        }
 
         if(!empty($data['links'])) {
             $update_data['links'] = $data['links'];
@@ -214,8 +222,14 @@ class StudyMaterialService implements StudyMaterialLogicInterface
         // Deleting study material. Links are deleted automatically by onDelete('cascade') event set in migration
         StudyMaterial::where('id', $id)->delete();
 
-        $this->response['data'] = $id;
-        $this->response['message'] = 'Учебный материал с id = ' . $id . ' удален.';
+        if(empty($rows_affected)) {
+            $this->response['success'] = false;
+            $this->response['data']    = 0;
+            $this->response['message'] = 'Учебный материал с id = ' . $id . ' не найден. Данные не удалены';
+        } else {
+            $this->response['data'] = $id;
+            $this->response['message'] = 'Учебный материал с id = ' . $id . ' удален.';
+        }
 
         return $this->response;
     }
