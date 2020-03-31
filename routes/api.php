@@ -21,8 +21,8 @@ Route::group([
     'namespace' => 'Api'
 ], function() {
 
-    Route::get('study_materials', 'StudyMaterialController@index');
-    Route::get('study_materials/{study_material}', 'StudyMaterialController@show');
+    Route::get( 'study_materials', 'StudyMaterialController@index');
+    Route::get( 'study_materials/{study_material}', 'StudyMaterialController@show');
     Route::post('study_materials/create', 'StudyMaterialController@create');
     Route::post('study_materials/update/{study_material}', 'StudyMaterialController@update');
     Route::post('study_materials/delete/{study_material}', 'StudyMaterialController@destroy');
