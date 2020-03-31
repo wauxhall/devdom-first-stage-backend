@@ -25,7 +25,7 @@ class StudyMaterialLinkController extends Controller
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLinkLogic->createStudyMaterialLinks($request->input('study_material'), $request->input('links'));
+        $response = $studyMaterialLinkLogic->createStudyMaterialLinks($request->input('links'));
 
         return $this->sendResponse($response, 'Ссылки добавлены!');
     }
@@ -41,7 +41,7 @@ class StudyMaterialLinkController extends Controller
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLinkLogic->updateStudyMaterialLinks($request->input('study_material'), $request->input('links'));
+        $response = $studyMaterialLinkLogic->updateStudyMaterialLinks($request->input('links'));
 
         return $this->sendResponse($response, 'Ссылки обновлены!');
     }
@@ -57,7 +57,7 @@ class StudyMaterialLinkController extends Controller
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLinkLogic->deleteStudyMaterialLinks($request->input('study_material'), $request->input('link_ids'));
+        $response = $studyMaterialLinkLogic->deleteStudyMaterialLinks($request->input('links'));
 
         return $this->sendResponse($response, 'Ссылки удалены!');
     }

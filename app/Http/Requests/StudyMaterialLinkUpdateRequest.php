@@ -26,7 +26,6 @@ class StudyMaterialLinkUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'study_material' => 'required|numeric|exists:study_materials,id',
             'links'          => 'required|array',
             'links.*'        => 'required|array',
             'links.*.id'     => 'required|numeric|min:1|exists:study_material_links,id',

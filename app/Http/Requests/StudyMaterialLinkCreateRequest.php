@@ -26,9 +26,10 @@ class StudyMaterialLinkCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'study_material' => 'required|numeric|min:1|exists:study_materials,id',
-            'links'          => 'required|array',
-            'links.*'        => 'required|string|min:3'
+            'links'             => 'required|array',
+            'links.*'           => 'required|array',
+            'links.*.study_material_id' => 'required|numeric|min:1|exists:study_materials,id',
+            'links.*.link'      => 'required|string|min:3'
         ];
     }
 
@@ -38,7 +39,7 @@ class StudyMaterialLinkCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'links.*.min'   => 'Ссылка должна быть длиннее 3 символов',
+            'links.*.link.min'   => 'Ссылка должна быть длиннее 3 символов',
         ];
     }
 

@@ -9,8 +9,6 @@ use App\Http\Requests\StudyMaterialUpdateRequest;
 use App\Services\Contracts\StudyMaterialLogicInterface;
 use App\Traits\SendResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use function intval;
 
 class StudyMaterialController extends Controller
 {
@@ -33,13 +31,13 @@ class StudyMaterialController extends Controller
     }
 
     /**
+     * @param $id
      * @param StudyMaterialLogicInterface $studyMaterialLogic
-     * @param Request $request
      * @return JsonResponse
      */
-    public function show(StudyMaterialLogicInterface $studyMaterialLogic, Request $request) : JsonResponse
+    public function show($id, StudyMaterialLogicInterface $studyMaterialLogic) : JsonResponse
     {
-        $response = $studyMaterialLogic->getStudyMaterial(intval($request->input('study_material_id', 0)));
+        $response = $studyMaterialLogic->getStudyMaterial(\intval($id));
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);
@@ -49,13 +47,13 @@ class StudyMaterialController extends Controller
     }
 
     /**
+     * @param $id
      * @param StudyMaterialLogicInterface $studyMaterialLogic
-     * @param Request $request
      * @return JsonResponse
      */
-    public function destroy(StudyMaterialLogicInterface $studyMaterialLogic, Request $request) : JsonResponse
+    public function destroy($id, StudyMaterialLogicInterface $studyMaterialLogic) : JsonResponse
     {
-        $response = $studyMaterialLogic->deleteStudyMaterial(intval($request->input('study_material_id', 0)));
+        $response = $studyMaterialLogic->deleteStudyMaterial(\intval($id));
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);
@@ -85,17 +83,18 @@ class StudyMaterialController extends Controller
     }
 
     /**
+     * @param $id
      * @param StudyMaterialLogicInterface $studyMaterialLogic
      * @param StudyMaterialUpdateRequest $request
      * @return JsonResponse
      */
-    public function update(StudyMaterialLogicInterface $studyMaterialLogic, StudyMaterialUpdateRequest $request) : JsonResponse
+    public function update($id, StudyMaterialLogicInterface $studyMaterialLogic, StudyMaterialUpdateRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLogic->updateStudyMaterial($request->all());
+        $response = $studyMaterialLogic->updateStudyMaterial(\intval($id), $request->all());
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);

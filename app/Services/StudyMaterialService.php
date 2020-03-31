@@ -130,34 +130,37 @@ class StudyMaterialService implements StudyMaterialLogicInterface
 
         $study_material = StudyMaterial::create($create_data);
 
-        $this->studyMaterialLinkLogic->createStudyMaterialLinks($study_material->id, $data['links']);
+        $create_data['id'] = $study_material->id;
+
+        if(!empty($data['links'])) {
+            $create_data['links'] = [];
+
+            foreach($data['links'] as $link) {
+                $link['study_material_id'] = $create_data['id'];
+                $create_data['links'] = $link;
+            }
+
+            $this->studyMaterialLinkLogic->createStudyMaterialLinks($create_data['links']);
+        }
 
         DB::commit();
 
-        $this->response['data'] = [
-            'id'                  => $study_material->id,
-            'study_material_type' => $data['study_material_type'],
-            'author_type_id'      => $data['author_type'],
-            'name'                => $data['name'],
-            'description'         => (!empty($data['description']) ? $data['description'] : ''),
-            'links'               => $data['links']
-        ];
-        $this->response['message'] = 'Учебный материал создан с id = ' . $study_material->id;
+        $this->response['data'] = $create_data;
+        $this->response['message'] = 'Учебный материал создан с id = ' . $create_data['id'];
 
         return $this->response;
     }
 
     /**
+     * @param int $id
      * @param array $data
      * @return array
      */
-    public function updateStudyMaterial(array $data) : array
+    public function updateStudyMaterial(int $id, array $data) : array
     {
         if(empty($data)) {
            return $this->response;
         }
-
-        $id = $data['id'];
 
         $update_data = [];
 
@@ -183,7 +186,7 @@ class StudyMaterialService implements StudyMaterialLogicInterface
 
         if(!empty($data['links'])) {
             $update_data['links'] = $data['links'];
-            $this->studyMaterialLinkLogic->updateStudyMaterialLinks($id, $update_data['links']);
+            $this->studyMaterialLinkLogic->updateStudyMaterialLinks($update_data['links']);
         }
 
         DB::commit();

@@ -26,9 +26,8 @@ class StudyMaterialLinkDeleteRequest extends FormRequest
     public function rules()
     {
         return [
-            'study_material' => 'required|numeric|exists:study_materials,id',
-            'link_ids'       => 'required|array',
-            'link_ids.*'     => 'required|numeric|min:1|exists:study_material_links,id'
+            'links'       => 'required|array',
+            'links.*'     => 'required|numeric|min:1|exists:study_material_links,id'
         ];
     }
 
