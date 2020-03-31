@@ -19,7 +19,7 @@ class StudyMaterialLinkController extends Controller
      * @param StudyMaterialLinkCreateRequest $request
      * @return JsonResponse
      */
-    public function store(StudyMaterialLinkLogicInterface $studyMaterialLinkLogic, StudyMaterialLinkCreateRequest $request) : JsonResponse
+    public function create(StudyMaterialLinkLogicInterface $studyMaterialLinkLogic, StudyMaterialLinkCreateRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);

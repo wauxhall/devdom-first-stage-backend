@@ -20,6 +20,14 @@ Route::group([
     'middleware' => 'auth:api',
     'namespace' => 'Api'
 ], function() {
-    Route::resource('study_materials', 'StudyMaterialController');
-    Route::resource('study_material_links', 'StudyMaterialLinkController', [ 'except' => [ 'index', 'show' ] ]);
+
+    Route::get('study_materials', 'StudyMaterialController@index');
+    Route::get('study_materials/{study_material}', 'StudyMaterialController@show');
+    Route::post('study_materials/create', 'StudyMaterialController@create');
+    Route::post('study_materials/update/{study_material}', 'StudyMaterialController@update');
+    Route::post('study_materials/delete/{study_material}', 'StudyMaterialController@destroy');
+
+    Route::post('study_material_links/create', 'StudyMaterialLinkController@create');
+    Route::post('study_material_links/update', 'StudyMaterialLinkController@update');
+    Route::post('study_material_links/delete', 'StudyMaterialLinkController@destroy');
 });

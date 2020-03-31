@@ -47,27 +47,11 @@ class StudyMaterialController extends Controller
     }
 
     /**
-     * @param $id
-     * @param StudyMaterialLogicInterface $studyMaterialLogic
-     * @return JsonResponse
-     */
-    public function destroy($id, StudyMaterialLogicInterface $studyMaterialLogic) : JsonResponse
-    {
-        $response = $studyMaterialLogic->deleteStudyMaterial(\intval($id));
-
-        if(!$response['success']) {
-            return $this->sendError('Возникли ошибки.', $response['data'], 422);
-        }
-
-        return $this->sendResponse($response['data'], $response['message']);
-    }
-
-    /**
      * @param StudyMaterialLogicInterface $studyMaterialLogic
      * @param StudyMaterialCreateRequest $request
      * @return JsonResponse
      */
-    public function store(StudyMaterialLogicInterface $studyMaterialLogic, StudyMaterialCreateRequest $request) : JsonResponse
+    public function create(StudyMaterialLogicInterface $studyMaterialLogic, StudyMaterialCreateRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
@@ -95,6 +79,22 @@ class StudyMaterialController extends Controller
         }
 
         $response = $studyMaterialLogic->updateStudyMaterial(\intval($id), $request->all());
+
+        if(!$response['success']) {
+            return $this->sendError('Возникли ошибки.', $response['data'], 422);
+        }
+
+        return $this->sendResponse($response['data'], $response['message']);
+    }
+
+    /**
+     * @param $id
+     * @param StudyMaterialLogicInterface $studyMaterialLogic
+     * @return JsonResponse
+     */
+    public function destroy($id, StudyMaterialLogicInterface $studyMaterialLogic) : JsonResponse
+    {
+        $response = $studyMaterialLogic->deleteStudyMaterial(\intval($id));
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);
