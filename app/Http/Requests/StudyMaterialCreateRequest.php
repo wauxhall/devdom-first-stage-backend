@@ -30,8 +30,8 @@ class StudyMaterialCreateRequest extends FormRequest
             'author_type'         => 'required|numeric|min:1|exists:author_types,id',
             'name'                => 'required|string|min:3',
             'description'         => 'nullable|string',
-            'links'               => 'required|array',
-            'links.*'             => 'required|string|min:3'
+            'links'               => 'sometimes|array',
+            'links.*'             => 'required_with:links|string|min:3'
         ];
     }
 
