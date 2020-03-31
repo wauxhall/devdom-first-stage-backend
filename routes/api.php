@@ -21,4 +21,5 @@ Route::group([
     'namespace' => 'Api'
 ], function() {
     Route::resource('study_materials', 'StudyMaterialController');
+    Route::resource('study_material_links', 'StudyMaterialLinkController', [ 'except' => [ 'index', 'show' ] ]);
 });

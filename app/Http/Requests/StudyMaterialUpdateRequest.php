@@ -26,12 +26,15 @@ class StudyMaterialUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'study_material_type' => 'nullable|numeric|min:1',
-            'author_type'         => 'nullable|numeric|min:1',
+            'id'                  => 'required|numeric|exists:study_materials,id',
+            'study_material_type' => 'nullable|numeric|min:1|exists:study_material_types,id',
+            'author_type'         => 'nullable|numeric|min:1|exists:author_types,id',
             'name'                => 'nullable|string|min:3',
             'description'         => 'nullable|string',
             'links'               => 'sometimes|array',
-            'links.*'             => 'required_with:links|string|min:3'
+            'links.*'             => 'required_with:links|array',
+            'links.*.id'          => 'required_with:links|numeric|min:1|exists:study_material_links,id',
+            'links.*.link'        => 'required_with:links|string|min:3'
         ];
     }
 

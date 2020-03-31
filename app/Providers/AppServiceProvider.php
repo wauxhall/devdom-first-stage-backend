@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\StudyMaterialLinkService;
 use App\Services\StudyMaterialService;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,8 +15,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('App\Services\Contracts\StudyMaterialLogicInterface', function ($app) {
-            return new StudyMaterialService();
+        $studyMaterialLinkService = new StudyMaterialLinkService();
+
+        $this->app->singleton('App\Services\Contracts\StudyMaterialLinkLogicInterface', function ($app) use($studyMaterialLinkService) {
+            return $studyMaterialLinkService;
+        });
+
+        $this->app->singleton('App\Services\Contracts\StudyMaterialLogicInterface', function ($app) use($studyMaterialLinkService) {
+            return new StudyMaterialService($studyMaterialLinkService);
         });
     }
 

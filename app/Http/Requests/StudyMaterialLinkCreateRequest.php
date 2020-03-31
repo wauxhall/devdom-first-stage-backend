@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudyMaterialFilterRequest extends FormRequest
+class StudyMaterialLinkCreateRequest extends FormRequest
 {
     public $errors = [];
 
@@ -15,7 +15,7 @@ class StudyMaterialFilterRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -26,19 +26,9 @@ class StudyMaterialFilterRequest extends FormRequest
     public function rules()
     {
         return [
-            'searchword' => 'nullable|min:1',
-
-            'study_material_type'   => 'sometimes|array',
-            'study_material_type.*' => 'required_with:study_material_type|numeric|distinct|min:1',
-
-            'author_type'   => 'sometimes|array|min:1',
-            'author_type.*' => 'required_with:author_type|numeric|distinct|min:1',
-
-            'created_date_start' => 'nullable|date_format:Y-m-d',
-            'created_date_end' => 'nullable|date_format:Y-m-d',
-
-            'category'   => 'sometimes|array',
-            'category.*' => 'required_with:category|numeric|distinct|min:1'
+            'study_material' => 'required|numeric|min:1|exists:study_materials,id',
+            'links'          => 'required|array',
+            'links.*'        => 'required|string|min:3'
         ];
     }
 
@@ -48,7 +38,7 @@ class StudyMaterialFilterRequest extends FormRequest
     public function messages()
     {
         return [
-            'searchword.min' => 'Поисковое слово должно быть длиннее 3 символов'
+            'links.*.min'   => 'Ссылка должна быть длиннее 3 символов',
         ];
     }
 

@@ -71,6 +71,10 @@ class StudyMaterialController extends Controller
      */
     public function store(StudyMaterialLogicInterface $studyMaterialLogic, StudyMaterialCreateRequest $request) : JsonResponse
     {
+        if(!empty($request->errors)) {
+            return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
+        }
+
         $response = $studyMaterialLogic->createStudyMaterial($request->all());
 
         if(!$response['success']) {
@@ -87,6 +91,10 @@ class StudyMaterialController extends Controller
      */
     public function update(StudyMaterialLogicInterface $studyMaterialLogic, StudyMaterialUpdateRequest $request) : JsonResponse
     {
+        if(!empty($request->errors)) {
+            return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
+        }
+
         $response = $studyMaterialLogic->updateStudyMaterial($request->all());
 
         if(!$response['success']) {

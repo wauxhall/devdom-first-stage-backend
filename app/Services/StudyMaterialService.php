@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\StudyMaterial;
+use App\Services\Contracts\StudyMaterialLinkLogicInterface;
 use App\Services\Contracts\StudyMaterialLogicInterface;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class StudyMaterialService implements StudyMaterialLogicInterface
 {
@@ -13,6 +15,16 @@ class StudyMaterialService implements StudyMaterialLogicInterface
         'data'    => [],
         'message' => ''
     ];
+
+    private $studyMaterialLinkLogic;
+
+    /**
+     * StudyMaterialService constructor.
+     * @param StudyMaterialLinkLogicInterface $logic
+     */
+    public function __construct(StudyMaterialLinkLogicInterface $logic) {
+        $this->studyMaterialLinkLogic = $logic;
+    }
 
     /**
      * @param array $filter_data
@@ -64,6 +76,10 @@ class StudyMaterialService implements StudyMaterialLogicInterface
             }
         }
 
+        if(!empty($data['searchword'])) {
+            $query->where('name', 'LIKE', '%' . $data['searchword'] . '%');
+        }
+
         return $query;
     }
 
@@ -95,6 +111,92 @@ class StudyMaterialService implements StudyMaterialLogicInterface
     }
 
     /**
+     * @param array $data
+     * @return array
+     */
+    public function createStudyMaterial(array $data) : array
+    {
+        $create_data = [
+            'study_material_type_id' => $data['study_material_type'],
+            'author_type_id'         => $data['author_type'],
+            'name'                   => $data['name']
+        ];
+
+        if(!empty($data['description'])) {
+            $create_data['description'] = $data['description'];
+        }
+
+        DB::beginTransaction();
+
+        $study_material = StudyMaterial::create($create_data);
+
+        $this->studyMaterialLinkLogic->createStudyMaterialLinks($study_material->id, $data['links']);
+
+        DB::commit();
+
+        $this->response['data'] = [
+            'id'                  => $study_material->id,
+            'study_material_type' => $data['study_material_type'],
+            'author_type_id'      => $data['author_type'],
+            'name'                => $data['name'],
+            'description'         => (!empty($data['description']) ? $data['description'] : ''),
+            'links'               => $data['links']
+        ];
+        $this->response['message'] = 'Учебный материал создан с id = ' . $study_material->id;
+
+        return $this->response;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function updateStudyMaterial(array $data) : array
+    {
+        if(empty($data)) {
+           return $this->response;
+        }
+
+        $id = $data['id'];
+
+        $update_data = [];
+
+        if(!empty($data['study_material_type'])) {
+            $update_data['study_material_type_id'] = $data['study_material_type'];
+        }
+
+        if(!empty($data['author_type'])) {
+            $update_data['author_type_id'] = $data['author_type'];
+        }
+
+        if(!empty($data['name'])) {
+            $update_data['name'] = $data['name'];
+        }
+
+        if(!empty($data['description'])) {
+            $update_data['description'] = $data['description'];
+        }
+
+        DB::beginTransaction();
+
+        StudyMaterial::where('id', $id)->update($update_data);
+
+        if(!empty($data['links'])) {
+            $update_data['links'] = $data['links'];
+            $this->studyMaterialLinkLogic->updateStudyMaterialLinks($id, $update_data['links']);
+        }
+
+        DB::commit();
+
+        $update_data['id'] = $id;
+
+        $this->response['data'] = $update_data;
+        $this->response['message'] = 'Учебный материал с id = ' . $id . ' обновлен.';
+
+        return $this->response;
+    }
+
+    /**
      * @param int $id
      * @return array
      */
@@ -106,20 +208,12 @@ class StudyMaterialService implements StudyMaterialLogicInterface
             return $study_material;
         }
 
-        $affectedRows = StudyMaterial::where('id', $id)->delete();
+        // Deleting study material. Links are deleted automatically by onDelete('cascade') event set in migration
+        StudyMaterial::where('id', $id)->delete();
 
-        $this->response['data'] = $affectedRows;
+        $this->response['data'] = $id;
+        $this->response['message'] = 'Учебный материал с id = ' . $id . ' удален.';
 
         return $this->response;
-    }
-
-    public function createStudyMaterial(array $data) : array
-    {
-        // TODO: Implement createStudyMaterial() method.
-    }
-
-    public function updateStudyMaterial(array $data) : array
-    {
-        // TODO: Implement updateStudyMaterial() method.
     }
 }

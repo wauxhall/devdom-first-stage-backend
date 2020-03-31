@@ -26,8 +26,8 @@ class StudyMaterialCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'study_material_type' => 'required|numeric|min:1',
-            'author_type'         => 'required|numeric|min:1',
+            'study_material_type' => 'required|numeric|min:1|exists:study_material_types,id',
+            'author_type'         => 'required|numeric|min:1|exists:author_types,id',
             'name'                => 'required|string|min:3',
             'description'         => 'nullable|string',
             'links'               => 'required|array',
