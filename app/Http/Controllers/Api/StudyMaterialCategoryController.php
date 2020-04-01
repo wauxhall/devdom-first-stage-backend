@@ -3,59 +3,46 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StudyMaterialCreateRequest;
-use App\Http\Requests\StudyMaterialFilterRequest;
-use App\Http\Requests\StudyMaterialUpdateRequest;
-use App\Models\AuthorType;
-use App\Models\StudyMaterialType;
-use App\Services\Contracts\StudyMaterialLogicInterface;
+use App\Http\Requests\StudyMaterialCategoryCreateRequest;
+use App\Http\Requests\StudyMaterialCategoryUpdateRequest;
+use App\Services\Contracts\StudyMaterialCategoryLogicInterface;
 use App\Traits\SendResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class StudyMaterialController extends Controller
+class StudyMaterialCategoryController extends Controller
 {
     use SendResponse;
 
     private $logic;
 
-    /**
-     * StudyMaterialController constructor.
-     * @param StudyMaterialLogicInterface $studyMaterialLogic
-     */
-    public function __construct(StudyMaterialLogicInterface $studyMaterialLogic)
+    public function __construct(StudyMaterialCategoryLogicInterface $studyMaterialCategoryLogic)
     {
-        $this->logic = $studyMaterialLogic;
+        $this->logic = $studyMaterialCategoryLogic;
     }
 
     /**
-     * @param StudyMaterialFilterRequest $request
+     * Display a listing of the resource.
+     *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function index(StudyMaterialFilterRequest $request) : JsonResponse
+    public function index(Request $request) : JsonResponse
     {
-        if(!empty($request->errors)) {
-            return $this->sendError('Ошибка фильтрации данных.', $request->errors, 422);
-        }
-
-        $response = [
-            'study_materials' => $this->logic->getStudyMaterials($request->all())
-        ];
-
-        if($request->has('with_filter_values')) {
-            $response['author_types'] = AuthorType::all()->toArray();
-            $response['study_material_types'] = StudyMaterialType::all()->toArray();
-        }
+        $response = $this->logic->getCategories($request->all());
 
         return $this->sendResponse($response, '');
     }
 
     /**
-     * @param $id
+     * Display the specified resource.
+     *
+     * @param int $id
      * @return JsonResponse
      */
     public function show($id) : JsonResponse
     {
-        $response = $this->logic->getStudyMaterial(\intval($id));
+        $response = $this->logic->getCategoryWithStudyMaterials(\intval($id));
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);
@@ -65,16 +52,18 @@ class StudyMaterialController extends Controller
     }
 
     /**
-     * @param StudyMaterialCreateRequest $request
+     * Store a newly created resource in storage.
+     *
+     * @param StudyMaterialCategoryCreateRequest $request
      * @return JsonResponse
      */
-    public function create(StudyMaterialCreateRequest $request) : JsonResponse
+    public function create(StudyMaterialCategoryCreateRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $this->logic->createStudyMaterial($request->all());
+        $response = $this->logic->createCategory($request->all());
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);
@@ -84,17 +73,19 @@ class StudyMaterialController extends Controller
     }
 
     /**
-     * @param $id
-     * @param StudyMaterialUpdateRequest $request
+     * Update the specified resource in storage.
+     *
+     * @param StudyMaterialCategoryUpdateRequest $request
+     * @param int $id
      * @return JsonResponse
      */
-    public function update($id, StudyMaterialUpdateRequest $request) : JsonResponse
+    public function update(StudyMaterialCategoryUpdateRequest $request, $id) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $this->logic->updateStudyMaterial(\intval($id), $request->all());
+        $response = $this->logic->updateCategory(\intval($id), $request->all());
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);
@@ -104,12 +95,14 @@ class StudyMaterialController extends Controller
     }
 
     /**
-     * @param $id
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
      * @return JsonResponse
      */
     public function destroy($id) : JsonResponse
     {
-        $response = $this->logic->deleteStudyMaterial(\intval($id));
+        $response = $this->logic->deleteCategory(\intval($id));
 
         if(!$response['success']) {
             return $this->sendError('Возникли ошибки.', $response['data'], 422);

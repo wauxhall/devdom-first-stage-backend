@@ -14,50 +14,58 @@ class StudyMaterialLinkController extends Controller
 {
     use SendResponse;
 
+    private $logic;
+
     /**
+     * StudyMaterialLinkController constructor.
      * @param StudyMaterialLinkLogicInterface $studyMaterialLinkLogic
+     */
+    public function __construct(StudyMaterialLinkLogicInterface $studyMaterialLinkLogic)
+    {
+        $this->logic = $studyMaterialLinkLogic;
+    }
+
+    /**
      * @param StudyMaterialLinkCreateRequest $request
      * @return JsonResponse
      */
-    public function create(StudyMaterialLinkLogicInterface $studyMaterialLinkLogic, StudyMaterialLinkCreateRequest $request) : JsonResponse
+    public function create(StudyMaterialLinkCreateRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLinkLogic->createStudyMaterialLinks($request->input('links'));
+        $response = $this->logic->createStudyMaterialLinks($request->input('links'));
 
         return $this->sendResponse($response, 'Ссылки добавлены!');
     }
 
     /**
-     * @param StudyMaterialLinkLogicInterface $studyMaterialLinkLogic
      * @param StudyMaterialLinkUpdateRequest $request
      * @return JsonResponse
      */
-    public function update(StudyMaterialLinkLogicInterface $studyMaterialLinkLogic, StudyMaterialLinkUpdateRequest $request) : JsonResponse
+    public function update(StudyMaterialLinkUpdateRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLinkLogic->updateStudyMaterialLinks($request->input('links'));
+        $response = $this->logic->updateStudyMaterialLinks($request->input('links'));
 
         return $this->sendResponse($response, 'Ссылки обновлены!');
     }
 
     /**
-     * @param StudyMaterialLinkLogicInterface $studyMaterialLinkLogic
      * @param StudyMaterialLinkDeleteRequest $request
      * @return JsonResponse
      */
-    public function destroy(StudyMaterialLinkLogicInterface $studyMaterialLinkLogic, StudyMaterialLinkDeleteRequest $request) : JsonResponse
+    public function destroy(StudyMaterialLinkDeleteRequest $request) : JsonResponse
     {
         if(!empty($request->errors)) {
             return $this->sendError('Ошибка валидации данных.', $request->errors, 422);
         }
 
-        $response = $studyMaterialLinkLogic->deleteStudyMaterialLinks($request->input('links'));
+        $response = $this->logic->deleteStudyMaterialLinks($request->input('links'));
 
         return $this->sendResponse($response, 'Ссылки удалены!');
     }

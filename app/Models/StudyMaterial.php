@@ -10,7 +10,7 @@ class StudyMaterial extends Model
 
     public function category()
     {
-        return $this->belongsToMany(StudyMaterialCategory::class, 'study_material_study_material_category', 'study_material_category_id', 'study_material_id');
+        return $this->belongsToMany(StudyMaterialCategory::class, 'study_material_study_material_category');
     }
 
     public function study_material_link()

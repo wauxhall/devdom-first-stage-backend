@@ -28,17 +28,17 @@ class StudyMaterialFilterRequest extends FormRequest
         return [
             'searchword' => 'nullable|min:1',
 
-            'study_material_type'   => 'sometimes|array',
-            'study_material_type.*' => 'required_with:study_material_type|numeric|distinct|min:1',
+            'study_material_type_ids'   => 'sometimes|array',
+            'study_material_type_ids.*' => 'required_with:study_material_type|numeric|distinct|min:1',
 
-            'author_type'   => 'sometimes|array|min:1',
-            'author_type.*' => 'required_with:author_type|numeric|distinct|min:1',
+            'author_type_ids'   => 'sometimes|array|min:1',
+            'author_type_ids.*' => 'required_with:author_type|numeric|distinct|min:1',
 
             'created_date_start' => 'nullable|date_format:Y-m-d',
             'created_date_end' => 'nullable|date_format:Y-m-d',
 
-            'category'   => 'sometimes|array',
-            'category.*' => 'required_with:category|numeric|distinct|min:1'
+            'category_ids'   => 'sometimes|array',
+            'category_ids.*' => 'required_with:category|numeric|distinct|min:1'
         ];
     }
 

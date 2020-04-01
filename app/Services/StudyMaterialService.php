@@ -48,16 +48,20 @@ class StudyMaterialService implements StudyMaterialLogicInterface
      */
     public static function filter(Builder $query, array $data) : Builder
     {
-        if(!empty($data['study_material_type'])) {
-            foreach($data['study_material_type'] as $smt_id) {
-                $query->where('study_material_type_id', $smt_id);
-            }
+        if(!empty($data['study_material_type_ids'])) {
+            $query->where(function ($q) use ($data) {
+                foreach($data['study_material_type_ids'] as $smt_id) {
+                    $q->orWhere('study_material_type_id', $smt_id);
+                }
+            });
         }
 
-        if(!empty($data['author_type'])) {
-            foreach($data['author_type'] as $at_id) {
-                $query->where('author_type_id', $at_id);
-            }
+        if(!empty($data['author_type_ids'])) {
+            $query->where(function ($q) use ($data) {
+                foreach($data['author_type_ids'] as $smt_id) {
+                    $q->orWhere('author_type_ids', $smt_id);
+                }
+            });
         }
 
         if(!empty($data['created_date_start'])) {
@@ -68,12 +72,14 @@ class StudyMaterialService implements StudyMaterialLogicInterface
             }
         }
 
-        if(!empty($data['category'])) {
-            foreach($data['category'] as $category_id) {
-                $query->whereHas('categories', function (Builder $q) use($category_id) {
-                    $q->where('study_material_categories.id', $category_id);
-                })->get();
-            }
+        if(!empty($data['category_ids'])) {
+            $query->where(function ($qr) use ($data) {
+                foreach($data['category_ids'] as $category_id) {
+                    $qr->orWhereHas('category', function (Builder $q) use($category_id) {
+                        $q->where('study_material_categories.id', $category_id);
+                    });
+                }
+            });
         }
 
         if(!empty($data['searchword'])) {
@@ -117,13 +123,16 @@ class StudyMaterialService implements StudyMaterialLogicInterface
     public function createStudyMaterial(array $data) : array
     {
         $create_data = [
-            'study_material_type_id' => $data['study_material_type'],
-            'author_type_id'         => $data['author_type'],
-            'name'                   => $data['name']
+            'study_material_type_id' => $data['study_material_type_id'],
+            'author_type_id'         => $data['author_type_id'],
+            'name'                   => $data['name'],
+            'category_ids'           => $data['category_ids']
         ];
 
         if(!empty($data['description'])) {
             $create_data['description'] = $data['description'];
+        } else {
+            $create_data['description'] = '';
         }
 
         DB::beginTransaction();
@@ -133,14 +142,20 @@ class StudyMaterialService implements StudyMaterialLogicInterface
         $create_data['id'] = $study_material->id;
 
         if(!empty($data['links'])) {
-            $create_data['links'] = [];
+            $links = [];
 
             foreach($data['links'] as $link) {
-                $link['study_material_id'] = $create_data['id'];
-                $create_data['links'] = $link;
+                $links[] = [
+                    'study_material_id' => $create_data['id'],
+                    'link' => $link
+                ];
             }
 
-            $this->studyMaterialLinkLogic->createStudyMaterialLinks($create_data['links']);
+            $create_data['links'] = $this->studyMaterialLinkLogic->createStudyMaterialLinks($links);
+        }
+
+        foreach($create_data['category_ids'] as $category_id) {
+            StudyMaterial::find($create_data['id'])->category()->attach($create_data['id'], [ 'study_material_category_id' => $category_id ]);
         }
 
         DB::commit();
@@ -164,12 +179,12 @@ class StudyMaterialService implements StudyMaterialLogicInterface
 
         $update_data = [];
 
-        if(!empty($data['study_material_type'])) {
-            $update_data['study_material_type_id'] = $data['study_material_type'];
+        if(!empty($data['study_material_type_id'])) {
+            $update_data['study_material_type_id'] = $data['study_material_type_id'];
         }
 
-        if(!empty($data['author_type'])) {
-            $update_data['author_type_id'] = $data['author_type'];
+        if(!empty($data['author_type_id'])) {
+            $update_data['author_type_id'] = $data['author_type_id'];
         }
 
         if(!empty($data['name'])) {
@@ -194,7 +209,16 @@ class StudyMaterialService implements StudyMaterialLogicInterface
 
         if(!empty($data['links'])) {
             $update_data['links'] = $data['links'];
+
             $this->studyMaterialLinkLogic->updateStudyMaterialLinks($update_data['links']);
+        }
+
+        if(!empty($data['category_ids'])) {
+            $update_data['category_ids'] = $data['category_ids'];
+
+            foreach($update_data['category_ids'] as $category_id) {
+                StudyMaterial::find($id)->category()->sync([ $id => [ 'study_material_category_id' => $category_id ] ]);
+            }
         }
 
         DB::commit();
@@ -222,14 +246,8 @@ class StudyMaterialService implements StudyMaterialLogicInterface
         // Deleting study material. Links are deleted automatically by onDelete('cascade') event set in migration
         StudyMaterial::where('id', $id)->delete();
 
-        if(empty($rows_affected)) {
-            $this->response['success'] = false;
-            $this->response['data']    = 0;
-            $this->response['message'] = 'Учебный материал с id = ' . $id . ' не найден. Данные не удалены';
-        } else {
-            $this->response['data'] = $id;
-            $this->response['message'] = 'Учебный материал с id = ' . $id . ' удален.';
-        }
+        $this->response['data'] = $id;
+        $this->response['message'] = 'Учебный материал с id = ' . $id . ' удален.';
 
         return $this->response;
     }

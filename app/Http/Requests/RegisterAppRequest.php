@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StudyMaterialLinkUpdateRequest extends FormRequest
+class RegisterAppRequest extends FormRequest
 {
     public $errors = [];
 
@@ -13,7 +13,7 @@ class StudyMaterialLinkUpdateRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize() : bool
     {
         return true;
     }
@@ -23,23 +23,10 @@ class StudyMaterialLinkUpdateRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules() : array
     {
         return [
-            'links'          => 'required|array',
-            'links.*'        => 'required|array',
-            'links.*.id'     => 'required|numeric|min:1|exists:study_material_links,id',
-            'links.*.link'   => 'required|string|min:3'
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'links.*.min'   => 'Ссылка должна быть длиннее 3 символов',
+            'email' => 'required|email|max:255|unique:users'
         ];
     }
 

@@ -13,18 +13,19 @@ class StudyMaterialLinkService implements StudyMaterialLinkLogicInterface
      */
     public function createStudyMaterialLinks(array $links) : array
     {
-        $create_data = [];
+        $response = [];
 
         foreach($links as $link) {
-            $create_data[] = [
+            $new_link = StudyMaterialLink::create($link);
+
+            $response[] = [
+                'id' => $new_link->id,
                 'study_material_id' => $link['study_material_id'],
                 'link' => $link['link']
             ];
         }
 
-        StudyMaterialLink::insert($create_data);
-
-        return $links;
+        return $response;
     }
 
     /**
@@ -34,7 +35,7 @@ class StudyMaterialLinkService implements StudyMaterialLinkLogicInterface
     public function updateStudyMaterialLinks(array $links) : array
     {
         foreach($links as $link) {
-            StudyMaterialLink::where('id', $link['id'])->update('link', $link['link']);
+            StudyMaterialLink::where('id', $link['id'])->update([ 'link' => $link['link'] ]);
         }
 
         return $links;

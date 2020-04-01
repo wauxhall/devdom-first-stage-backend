@@ -14,4 +14,9 @@ class StudyMaterialCategory extends Model
     {
         return $this->hasMany(self::class, 'parent_id');
     }
+
+    public function study_material()
+    {
+        return $this->belongsToMany(StudyMaterial::class, 'study_material_study_material_category');
+    }
 }

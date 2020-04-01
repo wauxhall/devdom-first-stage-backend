@@ -26,12 +26,14 @@ class StudyMaterialCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'study_material_type' => 'required|numeric|min:1|exists:study_material_types,id',
-            'author_type'         => 'required|numeric|min:1|exists:author_types,id',
+            'study_material_type_id' => 'required|numeric|min:1|exists:study_material_types,id',
+            'author_type_id'      => 'required|numeric|min:1|exists:author_types,id',
             'name'                => 'required|string|min:3',
             'description'         => 'nullable|string',
             'links'               => 'sometimes|array',
-            'links.*'             => 'required_with:links|string|min:3'
+            'links.*'             => 'required_with:links|string|min:3',
+            'category_ids'        => 'required|array',
+            'category_ids.*'      => 'required|numeric|distinct|min:1|exists:study_material_categories,id'
         ];
     }
 
