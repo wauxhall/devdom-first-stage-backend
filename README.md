@@ -1,79 +1,68 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# StudyLib Backend
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+### Что это?
 
-## About Laravel
+StudyLib Backend - это универсальное rest-api приложение, написанное на PHP с использованием фреймворка Laravel. 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Является серверной частью приложения StudyLib, цель которого - создание персональной библиотеки ссылок на учебные материалы.
+Пользователь получает надежное хранилище с возможностью создания категорий и разделения материала по типам, 
+а также с удобным и быстрым поиском с помощью фильтров. Больше не нужно распихивать статьи по закладкам или заметкам.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Функционал
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Главная сущность приложения - учебный материал. Пока что суть его заключается в ссылках на стронние ресурсы, где находится вся информация, 
+а также название материала, заметки к нему и типы с категориями.  
+Но в дальнейших релизах планируется возможность сохранять сам контент в платформе, если это возможно, т.к. сторонние хранилища не надежны.
 
-## Learning Laravel
+##### Что на данный момент реализовано:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Api регистрации/авторизации пользователя. Возможность войти по емейлу и подписи зарегистрированного приложения вместо пароля.
+- Список учебных материалов
+- Фильтрация материалов по: **навзванию** (поиск по подстроке), **типу** (статья, видео и т.д.), **авторству** (свое/чужое), **дате создания**, **категориям**.
+- Создание, редактирование, удаление материала
+- Привязка нескольких категорий к материалу
+- Список категорий с поиском по названию
+- Неограниченная вложенность категорий
+- Создание, редактирование, удаление категорий
+- Чистая архитектура, готовая к планируемым (и не только) изменениям
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Как пользоваться
 
-## Laravel Sponsors
+#### Авторизация
+Для начала всегда нужно залогинить пользователя. Если пользователь открыл приложение впервые, то его нужно зарегистрировать. 
+В ответ придет токен авторизации, который нужно будет передавать в последующих запросах в заголовке Authorization. Перед токеном также нужно вставить слово Bearer и пробел после него.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Далее будем рассматривать систему авторизации из зарегистрированного приложения. *Пример такого приложения - StudyLib из vk mini apps. Оно может авторизовывать пользователя по своей подписи.*
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
-- [云软科技](http://www.yunruan.ltd/)
+Ссылки:
+- **Вход:** api/app/login
+- **Регистрация:** api/app/register
 
-## Contributing
+Для регистрации пользователя нужно передать только email. Для логина нужно передать email, sign, и параметры, из которых формируется sign. Для реализации проверки подписи приложения vk mini apps, необходимые параметры можно посмотреть в [оффициальной документации ВК](https://vk.com/dev/vk_apps_docs3?f=6.%2B%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B%2B%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA%D0%B0).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+#### Учебные материалы
+Ссылки, связанные с учебными материалами:
 
-## Code of Conduct
+- **Список:** api/study_materials
+- **Получить материал:** api/study_materials/{study_material_id}
+- **Создание:** api/study_materials/create
+- **Обновление:** api/study_materials/update/{study_material_id}
+- **Удаление:** api/study_materials/delete/{study_material_id}
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Параметры каждого запроса будут описаны позднее.
 
-## Security Vulnerabilities
+#### Категории
+Ссылки, связанные с категориями:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Список:** api/categories
+- **Страница категории:** api/categories/{category_id}
+- **Создание:** api/categories/create
+- **Обновление:** api/categories/update/{category_id}
+- **Удаление:** api/categories/delete/{category_id}
 
-## License
+Параметры каждого запроса будут описаны позднее.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Что планируется на ближайшее время
+
+- Улучшение системы авторизации
+- Добавление учебного плана и профиля умений. В учебном плане можно хранить материалы, которые планируется изучить. В профиле умений можно добавить имеющиеся навыки и те, которые планируется приобрести.
